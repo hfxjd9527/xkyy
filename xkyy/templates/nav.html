@@ -1,0 +1,16 @@
+<ul id="menu-new" class="menu">
+      <li class="current-menu-item"><a href="/" aria-current="page"><span class="faa-parent animated-hover"><i class="fa fa-fort-awesome faa-horizontal" aria-hidden="true"></i> 首页</span></a></li>
+      <li style="text-decoration: none"><a href="{% url 'starry:cate_list' %}"><span class="faa-parent animated-hover"><i class="fa fa-battery-three-quarters" aria-hidden="true"></i> 我还能学</span></a>
+       <ul class="sub-menu">
+           {% for cate in all_cate|slice:":2" %}
+        <li><a href="{% url 'starry:cate_list' %}?cate={{ cate.id }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> {{ cate }}</a></li>
+            {% endfor %}
+       </ul>
+
+      </li>
+      <li><a href="{% url 'starry:cate_list' %}?cate=3"><span class="faa-parent animated-hover"><i class="fa fa-slideshare" aria-hidden="true"></i> 啊！神器</span></a>
+       </li>
+     <li><a href="{% url 'starry:starry_lyrics' %}"><span class="faa-parent animated-hover"><i class="fa fa-music" aria-hidden="true"></i> 为你写诗</span></a></li>
+      <li><a href="{% url 'starry:starry_message' %}"><span class="faa-parent animated-hover"><i class="fa fa-pencil-square-o  faa-tada" aria-hidden="true"></i> 留言板</span></a></li>
+      <li><a href="{% url 'starry:starry_donate' %}"><span class="faa-parent animated-hover"><i class="fa fa-heart faa-pulse" aria-hidden="true"></i> 请我辣条</span></a></li>
+ </ul>

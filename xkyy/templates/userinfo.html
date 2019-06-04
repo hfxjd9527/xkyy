@@ -1,0 +1,22 @@
+{% load staticfiles %}
+{#自带登录按钮#}
+      {% if request.user.is_authenticated %}
+          <div class="header-user-avatar">
+           <a href="{% url 'users:user_info' %}"> <img class="faa-shake animated-hover" src="{{ MEDIA_URL }}{{ request.user.image }}" width="30" height="30" /> </a>
+           <div class="header-user-menu">
+                <div class="herder-user-name no-logged">
+                    <a class="personcenter fl" href="{% url 'users:user_info' %}">回家看看</a>&nbsp;
+                    <a class="fr" href="{% url 'logout' %}">果断退出</a>
+                </div>
+           </div>
+      </div>
+      {% else %}
+          <div class="header-user-avatar">
+            <a href="{% url 'login' %}"> <img class="faa-shake animated-hover" src="{% static 'picture/none.png' %}" width="30" height="30" /> </a>
+           <div class="header-user-menu">
+                <div class="herder-user-name no-logged">
+                 <a href="{% url 'login' %}" target="_blank" style="color:#333;font-weight:bold;text-decoration:none">难道不进来看看吗？</a>
+                </div>
+           </div>
+      </div>
+      {% endif %}

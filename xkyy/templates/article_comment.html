@@ -1,0 +1,753 @@
+{% load staticfiles %}
+    <div class="mod-tab-menu">
+        <ul class="course-menu clearfix">
+            <li><a id="commentOn" class="active" href="{% url 'starry:add_comment' %}"><span>评论</span></a></li>
+        </ul>
+    </div>
+    <!--发布评论-->
+    <div id="js-pub-container" class="issques clearfix js-form">
+        <div class="wgt-ipt-wrap pub-editor-wrap " id="js-pl-input-fake">
+            <textarea id="js-pl-textarea" class="" placeholder="扯淡、吐槽、表扬、鼓励……想说啥就说啥！" ></textarea>
+        </div>
+        <input type="button" id="js-pl-submit" class="pub-btn" data-cid="452" value="发表评论">
+        <p class="global-errortip js-global-error"></p>
+    </div>
+    <div id="course_note">
+{#        {% for comment in all_comments %}#}
+{#            <h3>{{ comment.comments }}</h3>#}
+{#        {% endfor %}#}
+
+
+        <ul class="mod-post" id="comment-list">
+            {% for user_comment in all_comments %}
+            <li class="post-row">
+                <div class="media">
+                    <span target="_blank"><img src='{{ MEDIA_URL }}{{ user_comment.user.image }}' width='40' height='40' /></span>
+                </div>
+                <div class="bd">
+                    <div class="tit">
+                        <span target="_blank">{{ user_comment.user.nick_name }}</span>
+                    </div>
+                    <p class="cnt">{{ user_comment.comments }}</p>
+                    <div class="footer clearfix">
+                        <span title="创建时间" class="l timeago">时间：{{ user_comment.add_time }}</span>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{#下面是评论的js#}
+   <script type="text/javascript">
+    //添加评论
+    $('#js-pl-submit').on('click', function(){
+        var comments = $("#js-pl-textarea").val()
+        if(comments == ""){
+            alert("评论不能为空")
+            return
+        }
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url:"{% url 'starry:add_comment' %}",
+            data:{'article_id':{{ article.id }}, 'comments':comments},
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+                if(data.status == 'fail'){
+                    if(data.msg == '用户未登录'){
+                        window.location.href="{% url 'login' %}";
+                    }else{
+                        alert(data.msg)
+                    }
+
+                }else if(data.status == 'success'){
+                    window.location.reload();//刷新当前页面.
+                }
+            },
+        });
+    });
+</script>
+{# js结束 #}
+
+
+
+
+
+{#<section id="comments" class="comments">#}
+{#     <div class="commentwrap comments-hidden">#}
+{#      <div class="notification">#}
+{#       <i class="iconfont icon-mark"></i>查看评论 -#}
+{#       <span class="noticom">17 条评论 </span>#}
+{#      </div>#}
+{#     </div>#}
+{#     <div class="comments-main">#}
+{#      <h3 id="comments-list-title">Comments | <span class="noticom">17 条评论 </span></h3>#}
+{#      <div id="loading-comments">#}
+{#       <span></span>#}
+{#      </div>#}
+{#      <ul class="commentwrap">#}
+{#       <li class="comment even thread-even depth-1" id="comment-4978">#}
+{#        <div class="contents">#}
+{#         <div class="comment-arrow">#}
+{#          <div class="main shadow">#}
+{#           <div class="profile">#}
+{#            <a href="" target="_blank" rel="nofollow"><img alt="壹茗记中" src="{% static 'picture/trans.ajax-spinner-preloader.svg' %}" onerror="imgError(this,1)" data-src="https://cn.gravatar.com/avatar/e51cd2967cfbdac03bd27963311016d1?s=80&amp;d=mm&amp;r=g" srcset="https://cn.gravatar.com/avatar/e51cd2967cfbdac03bd27963311016d1?s=160&amp;d=mm&amp;r=g 2x" class="avatar avatar-80 photo lazyload" height="80" width="80" /></a>#}
+{#           </div>#}
+{#           <div class="commentinfo">#}
+{#            <section class="commeta">#}
+{#             <div class="left">#}
+{#              <h4 class="author"><a href="" target="_blank" rel="nofollow"><img alt="壹茗记中" src="{% static 'picture/445e82c892104602be97abd74a48f070.gif' %}" srcset="https://cn.gravatar.com/avatar/e51cd2967cfbdac03bd27963311016d1?s=48&amp;d=mm&amp;r=g 2x" class="avatar avatar-24 photo" height="24" width="24" /><span class="bb-comment isauthor" title="中央钦定的">博主</span> 壹茗记中 <span class="showGrade0" title="萌萌哒新人~"><img src="{% static 'picture/level_0.svg' %}" style="height: 1.5em; max-height: 1.5em; display: inline-block;" /></span></a></h4>#}
+{#             </div>#}
+{#             <a rel="nofollow" class="comment-reply-link" href="#comment-4978" data-commentid="4978" data-postid="2577" data-belowelement="comment-4978" data-respondelement="respond" aria-label="Reply to 壹茗记中">Reply</a>#}
+{#             <div class="right">#}
+{#              <div class="info">#}
+{#               <time datetime="2019-04-23">发布于 16 天前</time>&nbsp;&nbsp;#}
+{#               <span class="useragent-info">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;Google Chrome 73.0.3683.90&nbsp;&nbsp;<img src="{% static 'picture/android.svg' %}" />&nbsp;Android 9 )</span>#}
+{#               <span class="useragent-info-m">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;&nbsp;<img src="{% static 'picture/android.svg' %}" /> )</span>&nbsp;来自: 香港 电讯盈科商用网络#}
+{#              </div>#}
+{#             </div>#}
+{#            </section>#}
+{#           </div>#}
+{#           <div class="body">#}
+{#            <p>我可以转发这篇文章么？</p>#}
+{#           </div>#}
+{#          </div>#}
+{#          <div class="arrow-left"></div>#}
+{#         </div>#}
+{#        </div>#}
+{#        <hr />#}
+{#        <ul class="children">#}
+{#         <li class="comment byuser comment-author-mashiro bypostauthor odd alt depth-2" id="comment-4983">#}
+{#          <div class="contents">#}
+{#           <div class="comment-arrow">#}
+{#            <div class="main shadow">#}
+{#             <div class="profile">#}
+{#              <a href="" target="_blank" rel="nofollow"><img alt="Mashiro" src="{% static 'picture/trans.ajax-spinner-preloader.svg' %}" onerror="imgError(this,1)" data-src="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=80&amp;d=mm&amp;r=g" srcset="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=160&amp;d=mm&amp;r=g 2x" class="avatar avatar-80 photo lazyload" height="80" width="80" /></a>#}
+{#             </div>#}
+{#             <div class="commentinfo">#}
+{#              <section class="commeta">#}
+{#               <div class="left">#}
+{#                <h4 class="author"><a href="" target="_blank" rel="nofollow"><img alt="Mashiro" src="{% static 'picture/ecb9f09eab134dcdb7d38f82f7ed0ea8.gif' %}" srcset="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=48&amp;d=mm&amp;r=g 2x" class="avatar avatar-24 photo" height="24" width="24" /><span class="bb-comment isauthor" title="中央钦定的">博主</span> Mashiro <span class="showGrade6" title="德国骨科"><img src="{% static 'picture/level_6.svg' %}" style="height: 1.5em; max-height: 1.5em; display: inline-block;" /></span></a></h4>#}
+{#               </div>#}
+{#               <a rel="nofollow" class="comment-reply-link" href="#comment-4983" data-commentid="4983" data-postid="2577" data-belowelement="comment-4983" data-respondelement="respond" aria-label="Reply to Mashiro">Reply</a>#}
+{#               <div class="right">#}
+{#                <div class="info">#}
+{#                 <time datetime="2019-04-24">发布于 15 天前</time>&nbsp;&nbsp;#}
+{#                 <span class="useragent-info">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;Google Chrome 73.0.3683.103&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" />&nbsp;Windows 10 )</span>#}
+{#                 <span class="useragent-info-m">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" /> )</span>&nbsp;来自: 上海市 移动#}
+{#                </div>#}
+{#               </div>#}
+{#              </section>#}
+{#             </div>#}
+{#             <div class="body">#}
+{#              <p><a href="#comment-4978" class="comment-at">@壹茗记中</a>&nbsp;可以的~注明出处即可</p>#}
+{#             </div>#}
+{#            </div>#}
+{#            <div class="arrow-left"></div>#}
+{#           </div>#}
+{#          </div>#}
+{#          <hr /></li>#}
+{#        </ul></li>#}
+{#       <li class="comment odd alt thread-even depth-1" id="comment-4506">#}
+{#        <ins class="adsbygoogle" style="display:block;margin-bottom: 20px;margin-top: -30px;" data-ad-format="fluid" data-ad-layout-key="-gg+3e+6u-86-5d" data-ad-client="ca-pub-8993652926815164" data-ad-slot="2762224161"></ins> <script>(adsbygoogle =window.adsbygoogle ||[]).push({});</script>#}
+{#        <div class="contents">#}
+{#         <div class="comment-arrow">#}
+{#          <div class="main shadow">#}
+           <div class="profile">
+            <a href="http://callma.xyz" target="_blank" rel="nofollow"><img src="{% static 'picture/trans.ajax-spinner-preloader.svg' %}" onerror="imgError(this,1)" data-src="" class="lazyload avatar avatar-24 photo" alt="&#55357;&#56832;" width="24" height="24" /></a>
+           </div>
+
+
+
+
+
+
+
+
+
+
+           <div class="commentinfo">
+            <section class="commeta">
+             <div class="left">
+              <h4 class="author"><a href="http://callma.xyz" target="_blank" rel="nofollow"><img src="{% static 'picture/07d2e96457de4dcaaef0df72338f015a.gif' %}" data-src="" class="lazyload avatar avatar-24 photo" alt="&#55357;&#56832;" width="24" height="24" onerror="imgError(this,1)" /><span class="bb-comment isauthor" title="中央钦定的">博主</span> 诡秘之主mea <span class="showGrade0" title="萌萌哒新人~"><img src="{% static 'picture/level_0.svg' %}" style="height: 1.5em; max-height: 1.5em; display: inline-block;" /></span></a></h4>
+             </div>
+             <a rel="nofollow" class="comment-reply-link" href="#comment-4506" data-commentid="4506" data-postid="2577" data-belowelement="comment-4506" data-respondelement="respond" aria-label="Reply to 诡秘之主mea">Reply</a>
+             <div class="right">
+              <div class="info">
+               <time datetime="2019-03-12">发布于 2019-03-12 08:10</time>&nbsp;&nbsp;
+               <span class="useragent-info">( <img src="{% static 'picture/firefox.svg' %}" />&nbsp;Firefox 65.0&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" />&nbsp;Windows 10 )</span>
+               <span class="useragent-info-m">( <img src="{% static 'picture/firefox.svg' %}" />&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" /> )</span>&nbsp;来自: 日本 东京都平和島Choopa数据中心
+              </div>
+             </div>
+            </section>
+           </div>
+
+
+
+
+
+
+
+
+
+           <div class="body">
+            <p>怎么说呢，写的很好，我作为一个集体人文主义者提一些自己的见解吧，我不是文科专业的，但是我深深的赞同博主对于自由的追求，以及自由的见解</p>
+            <p>我分成经济和所谓幸福感两个角度分析一下我对于“自由权”的见解吧。<br /> 1博主的观点也很明确，政府对市场经济的干预的确起到了作用，但是东亚国家也没能逃过经济危机，在市场经济下，的确会有很多国企没有竞争力，甚至形成腐败的垄断机构，但是这些“养老”企业的意义就是浪费税收吗？不尽然，的确我们看到大多没有竞争力的国企在被渐渐淘汰。但是在互联网企业中，我们可以看见其他企业少有的，希望能够参加国企的人，为什么呢？这是因为在中国劳动力过剩的情况下，互联网企业甚至可以吧996拿上台面鼓吹，在这种极端情况下，国企是给劳动者的一个兜底，是一个选择自己的健康的机会。<br /> 2幸福感当中有一个很有趣的极端例子，宗教。最近的话isis战败了，但是看看新闻，那些isis难民新娘可不认为她们是做的反人类事件，而是在遵循宗教指引，这种以虚幻承诺提升幸福感的事情我们的王朝历代都在做，以佛教劝人善良，以孔孟学说劝人尊重君主。但是随着54运动，我国其实陷入了一个到底要不要“教育”群众的疑惑中，不够我们也可以看到，我们义务教育学习的孔孟学说都是有趣的教你做人的方法。到底是不是枷锁，这个还是看个人判断。<br /> 3最后我想说的是，tg虽然不是一个完美的政党，但是我作为一个没什么大本事的亚洲人，我唯一的期待是，黄种人不会成为一个劣等民族，也就是强大起来，至于到底强大起来需要的是自由人文主义还是集体人文主义，我也不在意，我们公民的的确确需要更多的政治参与感了，而不是几个高高的报告，人大制度的确有他高明的地方，但是也有他腐朽的地方。</p>
+            <p>所以我非常支持博主对于自由权的看法。不过现在我也说不上我自己到底是持有着一种悲观还是乐观的态度，至少在我们这一代，中国的确通过做一个大工厂而获得了许多接触技术的机会，并且有了自己的技术。但是相反的，对于意识形态的管制却在资本市场渐渐明显起来了，尽管在13届上提出了不要“低级粉”“高级黑”的要求，但是文化局对于文化作品的无明确规则管制，一刀切，这种恶性毒药确实让公民缺少参与感。</p>
+            <p>所以感觉博主很厉害呀(自己的战还在备案，羡慕前辈)</p>
+           </div>
+          </div>
+          <div class="arrow-left"></div>
+         </div>
+        </div>
+        <hr />
+        <ul class="children">
+         <li class="comment byuser comment-author-mashiro bypostauthor even depth-2" id="comment-4981">
+          <div class="contents">
+           <div class="comment-arrow">
+            <div class="main shadow">
+             <div class="profile">
+              <a href="" target="_blank" rel="nofollow"><img alt="Mashiro" src="{% static 'picture/trans.ajax-spinner-preloader.svg' %}" onerror="imgError(this,1)" data-src="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=80&amp;d=mm&amp;r=g" srcset="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=160&amp;d=mm&amp;r=g 2x" class="avatar avatar-80 photo lazyload" height="80" width="80" /></a>
+             </div>
+             <div class="commentinfo">
+              <section class="commeta">
+               <div class="left">
+                <h4 class="author"><a href="" target="_blank" rel="nofollow"><img alt="Mashiro" src="{% static 'picture/ecb9f09eab134dcdb7d38f82f7ed0ea8.gif' %}" srcset="https://cn.gravatar.com/avatar/cd2b3a164c977539712929f66cad335c?s=48&amp;d=mm&amp;r=g 2x" class="avatar avatar-24 photo" height="24" width="24" /><span class="bb-comment isauthor" title="中央钦定的">博主</span> Mashiro <span class="showGrade6" title="德国骨科"><img src="{% static 'picture/level_6.svg' %}" style="height: 1.5em; max-height: 1.5em; display: inline-block;" /></span></a></h4>
+               </div>
+               <a rel="nofollow" class="comment-reply-link" href="#comment-4981" data-commentid="4981" data-postid="2577" data-belowelement="comment-4981" data-respondelement="respond" aria-label="Reply to Mashiro">Reply</a>
+               <div class="right">
+                <div class="info">
+                 <time datetime="2019-04-24">发布于 15 天前</time>&nbsp;&nbsp;
+                 <span class="useragent-info">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;Google Chrome 73.0.3683.103&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" />&nbsp;Windows 10 )</span>
+                 <span class="useragent-info-m">( <img src="{% static 'picture/chrome.svg' %}" />&nbsp;&nbsp;<img src="{% static 'picture/windows_win10.svg' %}" /> )</span>&nbsp;来自: 上海市 移动
+                </div>
+               </div>
+              </section>
+             </div>
+{#             <div class="body">#}
+{#              <p><a href="#comment-4506" class="comment-at">@诡秘之主mea</a>&nbsp;抱歉回复晚了！感谢赞同，握爪~<br /> 1）经济方面想补充的是，事实上如中国这样规模的国企，可以在很大程度上影响宏观经济，因此我认为国企是一个很好的经济政策执行工具；再者某些行业由国企来做显然更具有规模效应，不妨对比中美电网。<br /> 2）宗教方面，正如罗尔斯《正义论》中所言，无知之幕下一个人无法知道自己的宗教信仰是否是占主导地位的那一方，因此有了“良心的平等自由权”这个概念，至于isis，他们的信仰本无过，他们错在排除异教；同样的道理呢，孔孟告诉我们君臣父子、天下为公，这未尝不是美好的思想，可最后竟变成了君要臣死，臣不得不死，谁之过？非孔孟之过，只是人们有意无意歪曲了思想。所以呢信仰与幸福或许并不矛盾，只是对于信仰应当有自己的判断，这点你说的不错。<br /> 3）tg执政能力是挺棒，也有一批官员确实是在认真做事的，历史有目共睹，只是有时觉得那帮人propaganda的姿势太难看了:P</p>#}
+{#             </div>#}
+{#            </div>#}
+{#            <div class="arrow-left"></div>#}
+{#           </div>#}
+{#          </div>#}
+{#          <hr /></li>#}
+{#        </ul></li>#}
+{#      </ul>#}
+{#      <nav id="comments-navi"></nav>#}
+{#      <div id="respond" class="comment-respond">#}
+{#       <h3 id="reply-title" class="comment-reply-title"> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2018/03/07/freedom-and-bread/#respond" style="display:none;">Cancel Reply</a></small></h3>#}
+{#       <form action="" method="post" id="commentform" class="comment-form" novalidate="">#}
+{#        <p><i class="iconfont icon-markdown"></i> Markdown Supported while <i class="fa fa-code" aria-hidden="true"></i> Forbidden</p>#}
+{#        <textarea placeholder="你是我一生只会遇见一次的惊喜 ..." name="comment" class="commentbody" id="comment" rows="5" tabindex="4"></textarea>#}
+{#        <div id="upload-img-show"></div>#}
+{#        <p id="emotion-toggle" class="no-select"> <span class="emotion-toggle-off">戳我试试 OωO</span> <span class="emotion-toggle-on">嘿嘿嘿 ヾ(≧∇≦*)ゝ</span></p>#}
+{#        <div class="emotion-box no-select">#}
+{#         <table class="motion-switcher-table">#}
+{#          <tbody>#}
+{#           <tr>#}
+{#            <th onclick="motionSwitch('.bili')" class="bili-bar on-hover">bilibili~</th>#}
+{#            <th onclick="motionSwitch('.menhera')" class="menhera-bar">(=・ω・=)</th>#}
+{#            <th onclick="motionSwitch('.tieba')" class="tieba-bar">Tieba</th>#}
+{#           </tr>#}
+{#          </tbody>#}
+{#         </table>#}
+{#         <div class="bili-container motion-container">#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('baiyan',type = 'Math')" style="background-image: url(../Images/ic_emoji_baiyan.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/baiyan.png);#}
+{# animation-duration: 1800ms;#}
+{# animation-timing-function: steps(45);#}
+{# transform: translateY(-1408px);#}
+{# height: 1440px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('fadai',type = 'Math')" style="background-image: url(../Images/ic_emoji_fadai.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/fadai.png);#}
+{# animation-duration: 1080ms;#}
+{# animation-timing-function: steps(27);#}
+{# transform: translateY(-832px);#}
+{# height: 864px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('koubi',type = 'Math')" style="background-image: url(../Images/ic_emoji_koubi.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/koubi.png);#}
+{# animation-duration: 1200ms;#}
+{# animation-timing-function: steps(30);#}
+{# transform: translateY(-928px);#}
+{# height: 960px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('qinqin',type = 'Math')" style="background-image: url(../Images/ic_emoji_qinqin.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/qinqin.png);#}
+{# animation-duration: 280ms;#}
+{# animation-timing-function: steps(7);#}
+{# transform: translateY(-192px);#}
+{# height: 224px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('weiqu',type = 'Math')" style="background-image: url(../Images/ic_emoji_weiqu.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/weiqu.png);#}
+{# animation-duration: 800ms;#}
+{# animation-timing-function: steps(20);#}
+{# transform: translateY(-608px);#}
+{# height: 640px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('bishi',type = 'Math')" style="background-image: url(../Images/ic_emoji_bishi.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/bishi.png);#}
+{# animation-duration: 360ms;#}
+{# animation-timing-function: steps(9);#}
+{# transform: translateY(-256px);#}
+{# height: 288px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('fanu',type = 'Math')" style="background-image: url(../Images/ic_emoji_fanu.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/fanu.png);#}
+{# animation-duration: 1320ms;#}
+{# animation-timing-function: steps(33);#}
+{# transform: translateY(-1024px);#}
+{# height: 1056px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('kun',type = 'Math')" style="background-image: url(../Images/ic_emoji_kun.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/kun.png);#}
+{# animation-duration: 1760ms;#}
+{# animation-timing-function: steps(44);#}
+{# transform: translateY(-1376px);#}
+{# height: 1408px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('se',type = 'Math')" style="background-image: url(../Images/ic_emoji_se.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/se.png);#}
+{# animation-duration: 400ms;#}
+{# animation-timing-function: steps(10);#}
+{# transform: translateY(-288px);#}
+{# height: 320px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('weixiao',type = 'Math')" style="background-image: url(../Images/ic_emoji_weixiao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/weixiao.png);#}
+{# animation-duration: 800ms;#}
+{# animation-timing-function: steps(20);#}
+{# transform: translateY(-608px);#}
+{# height: 640px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('bizui',type = 'Math')" style="background-image: url(../Images/ic_emoji_bizui.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/bizui.png);#}
+{# animation-duration: 1240ms;#}
+{# animation-timing-function: steps(31);#}
+{# transform: translateY(-960px);#}
+{# height: 992px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('ganga',type = 'Math')" style="background-image: url(../Images/ic_emoji_ganga.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/ganga.png);#}
+{# animation-duration: 1520ms;#}
+{# animation-timing-function: steps(38);#}
+{# transform: translateY(-1184px);#}
+{# height: 1216px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('lengmo',type = 'Math')" style="background-image: url(../Images/ic_emoji_lengmo.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/lengmo.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('shengbing',type = 'Math')" style="background-image: url(../Images/ic_emoji_shengbing.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/shengbing.png);#}
+{# animation-duration: 1400ms;#}
+{# animation-timing-function: steps(35);#}
+{# transform: translateY(-1088px);#}
+{# height: 1120px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('wunai',type = 'Math')" style="background-image: url(../Images/ic_emoji_wunai.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/wunai.png);#}
+{# animation-duration: 920ms;#}
+{# animation-timing-function: steps(23);#}
+{# transform: translateY(-704px);#}
+{# height: 736px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('chan',type = 'Math')" style="background-image: url(../Images/ic_emoji_chan.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/chan.png);#}
+{# animation-duration: 1600ms;#}
+{# animation-timing-function: steps(40);#}
+{# transform: translateY(-1248px);#}
+{# height: 1280px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('guilian',type = 'Math')" style="background-image: url(../Images/ic_emoji_guilian.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/guilian.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('liubixue',type = 'Math')" style="background-image: url(../Images/ic_emoji_liubixue.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/liubixue.png);#}
+{# animation-duration: 1400ms;#}
+{# animation-timing-function: steps(35);#}
+{# transform: translateY(-1088px);#}
+{# height: 1120px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('shengqi',type = 'Math')" style="background-image: url(../Images/ic_emoji_shengqi.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/shengqi.png);#}
+{# animation-duration: 440ms;#}
+{# animation-timing-function: steps(11);#}
+{# transform: translateY(-320px);#}
+{# height: 352px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('xiaoku',type = 'Math')" style="background-image: url(../Images/ic_emoji_xiaoku.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/xiaoku.png);#}
+{# animation-duration: 600ms;#}
+{# animation-timing-function: steps(15);#}
+{# transform: translateY(-448px);#}
+{# height: 480px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('daku',type = 'Math')" style="background-image: url(../Images/ic_emoji_daku.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/daku.png);#}
+{# animation-duration: 320ms;#}
+{# animation-timing-function: steps(8);#}
+{# transform: translateY(-224px);#}
+{# height: 256px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('guzhang',type = 'Math')" style="background-image: url(../Images/ic_emoji_guzhang.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/guzhang.png);#}
+{# animation-duration: 680ms;#}
+{# animation-timing-function: steps(17);#}
+{# transform: translateY(-512px);#}
+{# height: 544px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('liuhan',type = 'Math')" style="background-image: url(../Images/ic_emoji_liuhan.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/liuhan.png);#}
+{# animation-duration: 1080ms;#}
+{# animation-timing-function: steps(27);#}
+{# transform: translateY(-832px);#}
+{# height: 864px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('shuizhao',type = 'Math')" style="background-image: url(../Images/ic_emoji_shuizhao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/shuizhao.png);#}
+{# animation-duration: 960ms;#}
+{# animation-timing-function: steps(24);#}
+{# transform: translateY(-736px);#}
+{# height: 768px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('xieyanxiao',type = 'Math')" style="background-image: url(../Images/ic_emoji_xieyanxiao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/xieyanxiao.png);#}
+{# animation-duration: 320ms;#}
+{# animation-timing-function: steps(8);#}
+{# transform: translateY(-224px);#}
+{# height: 256px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('dalao',type = 'Math')" style="background-image: url(../Images/ic_emoji_dalao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/dalao.png);#}
+{# animation-duration: 1320ms;#}
+{# animation-timing-function: steps(33);#}
+{# transform: translateY(-1024px);#}
+{# height: 1056px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('haixiu',type = 'Math')" style="background-image: url(../Images/ic_emoji_haixiu.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/haixiu.png);#}
+{# animation-duration: 1240ms;#}
+{# animation-timing-function: steps(31);#}
+{# transform: translateY(-960px);#}
+{# height: 992px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('liulei',type = 'Math')" style="background-image: url(../Images/ic_emoji_liulei.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/liulei.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('sikao',type = 'Math')" style="background-image: url(../Images/ic_emoji_sikao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/sikao.png);#}
+{# animation-duration: 1440ms;#}
+{# animation-timing-function: steps(36);#}
+{# transform: translateY(-1120px);#}
+{# height: 1152px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('yiwen',type = 'Math')" style="background-image: url(../Images/ic_emoji_yiwen.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/yiwen.png);#}
+{# animation-duration: 840ms;#}
+{# animation-timing-function: steps(21);#}
+{# transform: translateY(-640px);#}
+{# height: 672px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('dalian',type = 'Math')" style="background-image: url(../Images/ic_emoji_dalian.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/dalian.png);#}
+{# animation-duration: 1480ms;#}
+{# animation-timing-function: steps(37);#}
+{# transform: translateY(-1152px);#}
+{# height: 1184px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('heirenwenhao',type = 'Math')" style="background-image: url(../Images/ic_emoji_heirenwenhao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/heirenwenhao.png);#}
+{# animation-duration: 1040ms;#}
+{# animation-timing-function: steps(26);#}
+{# transform: translateY(-800px);#}
+{# height: 832px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('miantian',type = 'Math')" style="background-image: url(../Images/ic_emoji_miantian.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/miantian.png);#}
+{# animation-duration: 1120ms;#}
+{# animation-timing-function: steps(28);#}
+{# transform: translateY(-864px);#}
+{# height: 896px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('tiaokan',type = 'Math')" style="background-image: url(../Images/ic_emoji_tiaokan.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/tiaokan.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('yun',type = 'Math')" style="background-image: url(../Images/ic_emoji_yun.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/yun.png);#}
+{# animation-duration: 480ms;#}
+{# animation-timing-function: steps(12);#}
+{# transform: translateY(-352px);#}
+{# height: 384px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('dianzan',type = 'Math')" style="background-image: url(../Images/ic_emoji_dianzan.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/dianzan.png);#}
+{# animation-duration: 800ms;#}
+{# animation-timing-function: steps(20);#}
+{# transform: translateY(-608px);#}
+{# height: 640px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('huaixiao',type = 'Math')" style="background-image: url(../Images/ic_emoji_huaixiao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/huaixiao.png);#}
+{# animation-duration: 1240ms;#}
+{# animation-timing-function: steps(31);#}
+{# transform: translateY(-960px);#}
+{# height: 992px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('mudengkoudai',type = 'Math')" style="background-image: url(../Images/ic_emoji_mudengkoudai.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/mudengkoudai.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('tiaopi',type = 'Math')" style="background-image: url(../Images/ic_emoji_tiaopi.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/tiaopi.png);#}
+{# animation-duration: 2000ms;#}
+{# animation-timing-function: steps(50);#}
+{# transform: translateY(-1568px);#}
+{# height: 1600px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('zaijian',type = 'Math')" style="background-image: url(../Images/ic_emoji_zaijian.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/zaijian.png);#}
+{# animation-duration: 960ms;#}
+{# animation-timing-function: steps(24);#}
+{# transform: translateY(-736px);#}
+{# height: 768px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('doge',type = 'Math')" style="background-image: url(../Images/ic_emoji_doge.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/doge.png);#}
+{# animation-duration: 800ms;#}
+{# animation-timing-function: steps(20);#}
+{# transform: translateY(-608px);#}
+{# height: 640px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('jingxia',type = 'Math')" style="background-image: url(../Images/ic_emoji_jingxia.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/jingxia.png);#}
+{# animation-duration: 1280ms;#}
+{# animation-timing-function: steps(32);#}
+{# transform: translateY(-992px);#}
+{# height: 1024px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('nanguo',type = 'Math')" style="background-image: url(../Images/ic_emoji_nanguo.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/nanguo.png);#}
+{# animation-duration: 1120ms;#}
+{# animation-timing-function: steps(28);#}
+{# transform: translateY(-864px);#}
+{# height: 896px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('touxiao',type = 'Math')" style="background-image: url(../Images/ic_emoji_touxiao.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/touxiao.png);#}
+{# animation-duration: 240ms;#}
+{# animation-timing-function: steps(6);#}
+{# transform: translateY(-160px);#}
+{# height: 192px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('zhoumei',type = 'Math')" style="background-image: url(../Images/ic_emoji_zhoumei.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/zhoumei.png);#}
+{# animation-duration: 40ms;#}
+{# animation-timing-function: steps(1);#}
+{# transform: translateY(-0px);#}
+{# height: 32px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('facai',type = 'Math')" style="background-image: url(../Images/ic_emoji_facai.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/facai.png);#}
+{# animation-duration: 1200ms;#}
+{# animation-timing-function: steps(30);#}
+{# transform: translateY(-928px);#}
+{# height: 960px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('keai',type = 'Math')" style="background-image: url(../Images/ic_emoji_keai.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/keai.png);#}
+{# animation-duration: 680ms;#}
+{# animation-timing-function: steps(17);#}
+{# transform: translateY(-512px);#}
+{# height: 544px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('outu',type = 'Math')" style="background-image: url(../Images/ic_emoji_outu.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/outu.png);#}
+{# animation-duration: 1680ms;#}
+{# animation-timing-function: steps(42);#}
+{# transform: translateY(-1312px);#}
+{# height: 1344px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('tuxue',type = 'Math')" style="background-image: url(../Images/ic_emoji_tuxue.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/tuxue.png);#}
+{# animation-duration: 320ms;#}
+{# animation-timing-function: steps(8);#}
+{# transform: translateY(-224px);#}
+{# height: 256px;#}
+{# "></div></span>#}
+{#          <span class="emotion-secter emotion-item emotion-select-parent" onclick="grin('zhuakuang',type = 'Math')" style="background-image: url(../Images/ic_emoji_zhuakuang.png);">#}
+{#           <div class="img emotion-select-child" style="background-image: url(../Images/zhuakuang.png);#}
+{# animation-duration: 760ms;#}
+{# animation-timing-function: steps(19);#}
+{# transform: translateY(-576px);#}
+{# height: 608px;#}
+{# "></div></span>#}
+{#         </div>#}
+{#         <div class="menhera-container motion-container" style="display:none;">#}
+{#          <a class="emoji-item">(⌒▽⌒)</a>#}
+{#          <a class="emoji-item">（￣▽￣）</a>#}
+{#          <a class="emoji-item">(=・ω・=)</a>#}
+{#          <a class="emoji-item">(｀・ω・&acute;)</a>#}
+{#          <a class="emoji-item">(〜￣△￣)〜</a>#}
+{#          <a class="emoji-item">(･∀･)</a>#}
+{#          <a class="emoji-item">(&deg;∀&deg;)ﾉ</a>#}
+{#          <a class="emoji-item">(￣3￣)</a>#}
+{#          <a class="emoji-item">╮(￣▽￣)╭</a>#}
+{#          <a class="emoji-item">(&acute;_ゝ｀)</a>#}
+{#          <a class="emoji-item">←_←</a>#}
+{#          <a class="emoji-item">→_→</a>#}
+{#          <a class="emoji-item">(&lt;_&lt;)</a>#}
+{#          <a class="emoji-item">(&gt;_&gt;)</a>#}
+{#          <a class="emoji-item">(;&not;_&not;)</a>#}
+{#          <a class="emoji-item">(&quot;▔□▔)/</a>#}
+{#          <a class="emoji-item">(ﾟДﾟ≡ﾟдﾟ)!?</a>#}
+{#          <a class="emoji-item">Σ(ﾟдﾟ;)</a>#}
+{#          <a class="emoji-item">Σ(￣□￣||)</a>#}
+{#          <a class="emoji-item">(’；ω；‘)</a>#}
+{#          <a class="emoji-item">（/TДT)/</a>#}
+{#          <a class="emoji-item">(^・ω・^ )</a>#}
+{#          <a class="emoji-item">(｡･ω･｡)</a>#}
+{#          <a class="emoji-item">(●￣(ｴ)￣●)</a>#}
+{#          <a class="emoji-item">ε=ε=(ノ≧∇≦)ノ</a>#}
+{#          <a class="emoji-item">(’･_･‘)</a>#}
+{#          <a class="emoji-item">(-_-#)</a>#}
+{#          <a class="emoji-item">（￣へ￣）</a>#}
+{#          <a class="emoji-item">(￣ε(#￣)Σ</a>#}
+{#          <a class="emoji-item">ヽ(‘Д’)ﾉ</a>#}
+{#          <a class="emoji-item">（#-_-)┯━┯</a>#}
+{#          <a class="emoji-item">(╯&deg;口&deg;)╯(┴—┴</a>#}
+{#          <a class="emoji-item">←◡←</a>#}
+{#          <a class="emoji-item">( ♥д♥)</a>#}
+{#          <a class="emoji-item">_(:3」∠)_</a>#}
+{#          <a class="emoji-item">Σ&gt;―(〃&deg;ω&deg;〃)♡→</a>#}
+{#          <a class="emoji-item">⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄</a>#}
+{#          <a class="emoji-item">(╬ﾟдﾟ)▄︻┻┳═一</a>#}
+{#          <a class="emoji-item">･*･:≡(　ε:)</a>#}
+{#          <a class="emoji-item">(笑)</a>#}
+{#          <a class="emoji-item">(汗)</a>#}
+{#          <a class="emoji-item">(泣)</a>#}
+{#          <a class="emoji-item">(苦笑)</a>#}
+{#         </div>#}
+{#         <div class="tieba-container motion-container" style="display:none;">#}
+{#          <span title="tongue" onclick="grin('tongue')"><img src="{% static 'picture/icon_tongue.gif' %}" /></span>#}
+{#          <span title="theblackline" onclick="grin('theblackline')"><img src="{% static 'picture/icon_theblackline.gif' %}" /></span>#}
+{#          <span title="tear" onclick="grin('tear')"><img src="{% static 'picture/icon_tear.gif' %}" /></span>#}
+{#          <span title="surprised" onclick="grin('surprised')"><img src="{% static 'picture/icon_surprised.gif' %}" /></span>#}
+{#          <span title="surprised2" onclick="grin('surprised2')"><img src="{% static 'picture/icon_surprised2.gif' %}" /></span>#}
+{#          <span title="spray" onclick="grin('spray')"><img src="{% static 'picture/icon_spray.gif' %}" /></span>#}
+{#          <span title="spit" onclick="grin('spit')"><img src="{% static 'picture/icon_spit.gif' %}" /></span>#}
+{#          <span title="smilingeyes" onclick="grin('smilingeyes')"><img src="{% static 'picture/icon_smilingeyes.gif' %}" /></span>#}
+{#          <span title="shui" onclick="grin('shui')"><img src="{% static 'picture/icon_shui.gif' %}" /></span>#}
+{#          <span title="shame" onclick="grin('shame')"><img src="{% static 'picture/icon_shame.gif' %}" /></span>#}
+{#          <span title="se" onclick="grin('se')"><img src="{% static 'picture/icon_se.gif' %}" /></span>#}
+{#          <span title="rmb" onclick="grin('rmb')"><img src="{% static 'picture/icon_rmb.gif' %}" /></span>#}
+{#          <span title="reluctantly" onclick="grin('reluctantly')"><img src="{% static 'picture/icon_reluctantly.gif' %}" /></span>#}
+{#          <span title="rbq" onclick="grin('rbq')"><img src="{% static 'picture/icon_rbq.gif' %}" /></span>#}
+{#          <span title="niconiconit" onclick="grin('niconiconit')"><img src="{% static 'picture/icon_niconiconit.gif' %}" /></span>#}
+{#          <span title="niconiconi" onclick="grin('niconiconi')"><img src="{% static 'picture/icon_niconiconi.gif' %}" /></span>#}
+{#          <span title="niconiconi-t" onclick="grin('niconiconi-t')"><img src="{% static 'picture/icon_niconiconi_t.gif' %}" /></span>#}
+{#          <span title="naive" onclick="grin('naive')"><img src="{% static 'picture/icon_naive.gif' %}" /></span>#}
+{#          <span title="ku" onclick="grin('ku')"><img src="{% static 'picture/icon_ku.gif' %}" /></span>#}
+{#          <span title="huaji" onclick="grin('huaji')"><img src="{% static 'picture/icon_huaji.gif' %}" /></span>#}
+{#          <span title="hu" onclick="grin('hu')"><img src="{% static 'picture/icon_hu.gif' %}" /></span>#}
+{#          <span title="han" onclick="grin('han')"><img src="{% static 'picture/icon_han.gif' %}" /></span>#}
+{#          <span title="haha" onclick="grin('haha')"><img src="{% static 'picture/icon_haha.gif' %}" /></span>#}
+{#          <span title="good" onclick="grin('good')"><img src="{% static 'picture/icon_good.gif' %}" /></span>#}
+{#          <span title="doubt" onclick="grin('doubt')"><img src="{% static 'picture/icon_doubt.gif' %}" /></span>#}
+{#          <span title="britan" onclick="grin('britan')"><img src="{% static 'picture/icon_britan.gif' %}" /></span>#}
+{#          <span title="bbd" onclick="grin('bbd')"><img src="{% static 'picture/icon_bbd.gif' %}" /></span>#}
+{#          <span title="awesome" onclick="grin('awesome')"><img src="{% static 'picture/icon_awesome.gif' %}" /></span>#}
+{#          <span title="anger" onclick="grin('anger')"><img src="{% static 'picture/icon_anger.gif' %}" /></span>#}
+{#          <span title="aa" onclick="grin('aa')"><img src="{% static 'picture/icon_aa.gif' %}" /></span>#}
+{#          <span title="Happy" onclick="grin('Happy')"><img src="{% static 'picture/icon_happy.gif' %}" /></span>#}
+{#          <span title="Grievance" onclick="grin('Grievance')"><img src="{% static 'picture/icon_grievance.gif' %}" /></span>#}
+{#         </div>#}
+{#        </div>#}
+{#        <div class="cmt-info-container">#}
+{#         <div class="comment-user-avatar">#}
+{#          <img src="{% static 'picture/97b8e4c38e9e42aa938adc3797a48f67.gif' %}" />#}
+{#          <div class="socila-check qq-check">#}
+{#           <i class="fa fa-qq" aria-hidden="true"></i>#}
+{#          </div>#}
+{#          <div class="socila-check gravatar-check">#}
+{#           <i class="fa fa-google" aria-hidden="true"></i>#}
+{#          </div>#}
+{#         </div>#}
+{#         <div class="popup cmt-popup cmt-author" onclick="cmt_showPopup(this)">#}
+{#          <span class="popuptext" id="thePopup" style="margin-left: -115px;width: 230px;">输入QQ号将自动拉取昵称和头像</span>#}
+{#          <input type="text" placeholder="昵称或QQ号 (必须 Name* )" name="author" id="author" value="" size="22" autocomplete="off" tabindex="1" aria-required="true" />#}
+{#         </div>#}
+{#         <div class="popup cmt-popup" onclick="cmt_showPopup(this)">#}
+{#          <span class="popuptext" id="thePopup" style="margin-left: -65px;width: 130px;">你将收到回复通知</span>#}
+{#          <input type="text" placeholder="邮箱 (必须 Email* )" name="email" id="email" value="" size="22" tabindex="1" autocomplete="off" aria-required="true" />#}
+{#         </div>#}
+{#         <div class="popup cmt-popup" onclick="cmt_showPopup(this)">#}
+{#          <span class="popuptext" id="thePopup" style="margin-left: -55px;width: 110px;">禁止小广告&#55357;&#56832;</span>#}
+{#          <input type="text" placeholder="网站 (选填 Site)" name="url" id="url" value="" size="22" autocomplete="off" tabindex="1" />#}
+{#         </div>#}
+{#        </div>#}
+{#        <label class="siren-checkbox-label"><input class="siren-checkbox-radio" type="checkbox" name="no-robot" /><span class="siren-no-robot-checkbox siren-checkbox-radioInput"></span>滴，学生卡 | I'm not a robot</label>#}
+{#        <input type="text" placeholder="QQ" name="new_field_qq" id="qq" value="" style="display:none" autocomplete="off" />#}
+{#        <p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="BiuBiuBiu~" /> <input type="hidden" name="comment_post_ID" value="2577" id="comment_post_ID" /> <input type="hidden" name="comment_parent" id="comment_parent" value="0" /></p>#}
+{#       </form>#}
+{#      </div>#}
+{#     </div>#}
+{#    </section>#}
+
+{#<script type="text/javascript">#}
+{#    //添加评论#}
+{#    $('#js-pl-submit').on('click', function(){#}
+{#        var comments = $("#js-pl-textarea").val()#}
+{#        if(comments == ""){#}
+{#            alert("评论不能为空")#}
+{#            return#}
+{#        }#}
+{#        $.ajax({#}
+{#            cache: false,#}
+{#            type: "POST",#}
+{#            url:"{% url 'course:add_comments' %}",#}
+{#            data:{'course_id':{{ course.id }}, 'comments':comments},#}
+{#            async: true,#}
+{#            beforeSend:function(xhr, settings){#}
+{#                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");#}
+{#            },#}
+{#            success: function(data) {#}
+{#                if(data.status == 'fail'){#}
+{#                    if(data.msg == '用户未登录'){#}
+{#                        window.location.href="{% url 'login' %}";#}
+{#                    }else{#}
+{#                        alert(data.msg)#}
+{#                    }#}
+{##}
+{#                }else if(data.status == 'success'){#}
+{#                    window.location.reload();//刷新当前页面.#}
+{#                }#}
+{#            },#}
+{#        });#}
+{#    });#}
+{#</script>#}

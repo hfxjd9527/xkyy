@@ -1,0 +1,12 @@
+body {
+    background-image: url("/static/images/iloli.gif");
+    visibility: visible;
+    opacity: .99;
+    animation: elastic .5s;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.post-entry {
+    margin-top: 30px;
+}

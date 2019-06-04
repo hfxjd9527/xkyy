@@ -1,0 +1,306 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+	<title>{% block title %}个人信息- 星空音乐{% endblock %}</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    {% include 'head.html' %}
+    {% block custom_css %}{% endblock %}
+
+
+    <script src="{% static 'scripts/starry-jquery.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'scripts/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
+
+</head>
+<body>
+<section class="headerwrap headerwrap2">
+    <header class="site-header no-select " role="banner">
+     <div class="site-top">
+            <div class="site-branding">
+       <span class="site-title"> <span class="logolink moe-mashiro"> <a href="/" alt="星空音乐"> <span class="sakurasono">仰望星空 </span>
+           <span class="shironeko">聆听音乐</span>
+       </a> </span> </span>
+      </div>
+      <div class="lower-cantiner">
+       <div class="lower">
+        <div id="show-nav" class="showNav mobile-fit">
+         <div class="line line1"></div>
+         <div class="line line2"></div>
+         <div class="line line3"></div>
+        </div>
+        <nav class="mobile-fit-control hide">
+            {% include 'nav.html' %}
+        </nav>
+       </div>
+      </div>
+        {% if request.user.is_authenticated %}
+          <div class="header-user-avatar">
+           <a href="{% url 'users:user_info' %}"> <img class="faa-shake animated-hover" src="{{ MEDIA_URL }}{{ request.user.image }}" width="30" height="30" /> </a>
+           <div class="header-user-menu">
+                <div class="herder-user-name no-logged">
+                    <a class="fr" href="{% url 'logout' %}">果断退出</a>
+                </div>
+           </div>
+      </div>
+      {% else %}
+          <div class="header-user-avatar">
+            <a href="{% url 'login' %}"> <img class="faa-shake animated-hover" src="{% static 'picture/none.png' %}" width="30" height="30" /> </a>
+           <div class="header-user-menu">
+                <div class="herder-user-name no-logged">
+                 <a href="{% url 'login' %}" target="_blank" style="color:#333;font-weight:bold;text-decoration:none">难道不进来看看吗？</a>
+                </div>
+           </div>
+      </div>
+      {% endif %}
+      <div class="searchbox">
+          <a href="{% url 'starry:starry_search' %}"><i class="iconfont starry-search iconsearch icon-search"></i></a>
+      </div>
+     </div>
+    </header>
+</section>
+
+
+
+<!--crumbs start-->
+
+<section>
+	<div class="wp list personal_list">
+    {% block content_right %}
+    <div class="right">
+		<div class="personal_des ">
+			<div class="head" style="border:1px solid #eaeaea;">
+				<h1>个人信息</h1>
+			</div>
+			<div class="inforcon">
+				<div class="left" style="width:242px;">
+                    <iframe id='frameFile' name='frameFile' style='display: none;'></iframe>
+                    <form class="clearfix" id="jsAvatarForm" enctype="multipart/form-data" autocomplete="off" method="post" action="/users/image/upload/" target='frameFile'>
+                        <label class="changearea" for="avatarUp">
+
+                            <span class="fl upload-inp-box" style="margin-left:70px;">
+                                <span class="button btn-green btn-w100" id="jsAvatarBtn">修改头像</span>
+                                <input type="file" name="image" id="avatarUp" class="js-img-up"/>
+                            </span>
+                        </label>
+                        <input type='hidden' name='csrfmiddlewaretoken' value='799Y6iPeEDNSGvrTu3noBrO4MBLv6enY' />
+                    </form>
+                    <div style="border-top:1px solid #eaeaea;margin-top:30px;">
+                        <a class="button btn-green btn-w100" id="jsUserResetPwd" style="margin:80px auto;width:100px;">修改密码</a>
+                    </div>
+				</div>
+				<form class="perinform" id="jsEditUserForm" autocomplete="off">
+					<ul class="right">
+						<li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
+                           <input type="text" name="nick_name" id="nick_name" value="django" maxlength="10">
+                            <i class="error-tips"></i>
+                        </li>
+						<li>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日：
+                           <input type="text" id="birth_day" name="birday" value="2009年9月2日" readonly="readonly"/>
+                            <i class="error-tips"></i>
+						</li>
+						<li>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：
+							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio"  name="gender" value="male" >男</label>
+							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="gender" value="female" checked="checked">女</label>
+						</li>
+
+
+
+						<li class="button heibtn">
+							<input type="button" id="jsEditUserBtn" value="保存">
+						</li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</div>
+    {% endblock %}
+	</div>
+</section>
+
+
+<div class="dialog" id="jsDialog">
+    <div class="successbox dialogbox" id="jsSuccessTips">
+        <h1>成功提交</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="cont">
+            <h2>您的需求提交成功！</h2>
+            <p></p>
+        </div>
+    </div>
+    <!--提示弹出框-->
+    <div class="bidtips dialogbox promptbox" id="jsComfirmDialig">
+        <h1>确认提交</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="cont">
+            <h2>您确认提交吗？</h2>
+            <dd class="autoTxtCount">
+                <div class="button">
+                    <input type="button" class="fl half-btn" value="确定" id="jsComfirmBtn"/>
+                    <span class="fr half-btn jsCloseDialog">取消</span>
+                </div>
+            </dd>
+        </div>
+    </div>
+    <div class="resetpwdbox dialogbox" id="jsResetDialog">
+        <h1>修改密码</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="cont">
+            <form id="jsResetPwdForm" autocomplete="off">
+                <div class="box">
+                    <span class="word2" >新&nbsp;&nbsp;密&nbsp;&nbsp;码</span>
+                    <input type="password" id="pwd" name="password1" placeholder="6-20位非中文字符"/>
+                </div>
+                <div class="box">
+                    <span class="word2" >确定密码</span>
+                    <input type="password" id="repwd" name="password2" placeholder="6-20位非中文字符"/>
+                </div>
+                <div class="error btns" id="jsResetPwdTips"></div>
+                <div class="button">
+                    <input id="jsResetPwdBtn" type="button" value="提交" />
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="resetpassbox dialogbox" id="jsSetNewPwd">
+        <h1>重新设置密码</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <p class="green">请输入新密码</p>
+        <form id="jsSetNewPwdForm">
+            <div class="box">
+                <span class="word2">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>
+                <input type="password" name="password" id="jsResetPwd" placeholder="请输入新密码"/>
+            </div>
+            <div class="box">
+                <span class="word2">确&nbsp;认&nbsp;密&nbsp;码</span>
+                <input type="password" name="password2" id="jsResetPwd2" placeholder="请再次输入新密码"/>
+            </div>
+            <div class="box">
+                <span class="word2">验&nbsp;&nbsp;证&nbsp;&nbsp;码</span>
+                <input type="text" name="code" id="jsResetCode" placeholder="请输入手机验证码"/>
+            </div>
+            <div class="error btns" id="jsSetNewPwdTips"></div>
+            <div class="button">
+                <input type="hidden" name="mobile" id="jsInpResetMobil" />
+                <input id="jsSetNewPwdBtn" type="button" value="提交" />
+            </div>
+            <input type='hidden' name='csrfmiddlewaretoken' value='DaP7IUKm9FA9nELA9YUlYYWpyIDdCiIP' />
+        </form>
+    </div>
+    <div class="forgetbox dialogbox">
+        <h1>忘记密码</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="cont">
+            <form id="jsFindPwdForm" autocomplete="off">
+                <input type='hidden' name='csrfmiddlewaretoken' value='DaP7IUKm9FA9nELA9YUlYYWpyIDdCiIP' />
+                <div class="box">
+                    <span class="word2" >账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</span>
+                    <input type="text" id="account" name="account" placeholder="手机/邮箱"/>
+                </div>
+                <div class="box">
+                    <span class="word3">验证码</span>
+                    <input autocomplete="off" class="form-control-captcha find-password-captcha" id="find-password-captcha_1" name="captcha_f_1" placeholder="请输入验证码" type="text" /> <input class="form-control-captcha find-password-captcha" id="find-password-captcha_0" name="captcha_f_0" placeholder="请输入验证码" type="hidden" value="5f3c00e47fb1be12d2fd15b9a860711597721b3f" /> &nbsp;<img src="/captcha/image/5f3c00e47fb1be12d2fd15b9a860711597721b3f/" alt="captcha" class="captcha" />
+                </div>
+                <div class="error btns" id="jsForgetTips"></div><!--忘记密码错误-->
+                <div class="button">
+                    <input type="hidden" name="sms_type" value="1">
+                    <input id="jsFindPwdBtn" type="button" value="提交" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="bg" id="dialogBg"></div>
+
+
+
+<script src="{% static 'scripts/usercenter-jquery.upload.js'%}" type='text/javascript'></script>
+<script src="{% static 'scripts/usercenter-validate.js' %}" type="text/javascript"></script>
+<script src="{% static 'scripts/usercenter-deco-user.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/laydate/laydate.js' %}"></script>
+<script src="{% static 'js/queryCity/js/public.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
+
+<script src="{% static 'scripts/deco-common.js' %}"  type="text/javascript"></script>
+<script src="{% static 'scripts/jquery.scrollLoading.js' %}"  type="text/javascript"></script>
+<script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
+<script src="{% static 'js/layer/layer.js' %}"></script>
+
+<script src="{% static 'js/validateDialog.js' %}"  type="text/javascript"></script>
+
+
+
+{% block custom_js %}
+{% endblock %}
+<footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="site-info">
+     <div class="footertext">
+      <div class="img-preload">
+       <img src="{% static 'picture/wordpress-rotating-ball-o.svg' %}" />
+{#       <img src="{% static 'picture/disqus-preloader.svg' %}" />#}
+      </div>
+      <p class="foo-logo" style="background-image: url("{% static 'images/sakura.svg' %}");"></p>
+      <p style="font-family: 'Ubuntu', sans-serif;"><span style="color: #666666;">The longest day <i class="fa fa-heart animated" style="color: #e74c3c;"></i> has an end.</span></p>
+      <p>&copy; 2019 星空音乐 豫ICP备17042269号</p>
+     </div>
+     <div class="footer-device"></div>
+     <p id="footer-sponsor"><a href="https://console.upyun.com/register/?invite=r1EuSLN-f" target="_blank" alt="CDN Sponsor" rel="nofollow"><img src="{% static 'picture/upyun.png' %}" alt="CDN Sponsor" style="height: 2em; max-height: 2em;" /></a>&nbsp;&nbsp;&nbsp;<a href="http://www.vultr.com/?ref=7196564" target="_blank" alt="Server provider" rel="nofollow"><img src="{% static 'picture/logo_onwhite.png' %}" alt="Server provider" style="height: 1.3em; max-height: 1.3em;padding-bottom: 0px;margin-bottom: 0.35em;" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.jsdelivr.com/" target="_blank" alt="Free CDN" rel="nofollow"><img src="{% static 'picture/jsdelivr_logo.svg' %}" alt="jsDelivr" style="height: 2em; max-height: 2em;padding-bottom: 0px;" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.google.com/intl/ja/analytics/" target="_blank" alt="Analytics solution" rel="nofollow"><img src="{% static 'picture/google.svg' %}" alt="Google Analytics" style="height: 1.7em; max-height: 1.7em;padding-bottom: 0px;" /></a></p>
+    </div>
+   </footer>
+ <div class="openNav no-select">
+    <div class="iconflat no-select">
+     <div class="icon"></div>
+    </div>
+    <div class="site-branding">
+       <span class="site-title"> <span class="logolink moe-mashiro"> <a href="/" alt="星空音乐"> <span class="sakurasono">仰望星空 </span>
+           <span class="shironeko">聆听音乐</span>
+       </a> </span> </span>
+      </div>
+   </div>
+  <div id="mo-nav">
+   <div class="m-avatar">
+    <img src="{% static 'picture/avatar.jpg' %}" />
+   </div>
+   <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">Starry Music</p>
+   <p style="text-align: center; word-spacing: 20px;">
+{#       <a href="http://twitter.com/2hengxin" class="fa fa-twitter" target="_blank" style="color: #00aced"></a> #}
+       <a href="http://weibo.com/3951259526" class="fa fa-weibo" target="_blank" style="color: #dd4b39"></a> <a href="https://github.com/hfxjd9527" class="fa fa-github" target="_blank" style="color: #333"></a> <a onclick="mail_me()" class="fa fa-envelope" style="color: #ffbf00"></a></p>
+   {% include 'nav.html' %}
+   <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy; 2019 星空音乐</p>
+  </div>
+<a href="#" class="cd-top faa-float animated "></a>
+  <button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <form class="js-search search-form search-form--modal" method="get" starry-search role="search">
+   <div class="search-form__inner">
+    <div>
+     <p class="micro mb-">想要找点什么呢？</p>
+     <i class="iconfont icon-search"></i>
+     <input id="search_keywords" class="text-input" type="search" name="s" placeholder="Search" required="" />
+    </div>
+   </div>
+   <div class="search_close"></div>
+  </form>
+
+
+<script type="text/javascript">var HermitX ={"ajaxurl":"https:\/\/2heng.xin\/wp-admin\/admin-ajax.php","version":"2.9.6"};</script>
+  <script type="text/javascript" src="{% static 'scripts/hermit-load.min.js' %}"></script>
+  <script type="text/javascript">var Poi ={"pjax":"1","movies":{"url":"https:\/\/cdn.jsdelivr.net\/gh\/moezx\/cdn@3.1.3\/","name":"The Pet Girl of Sakurasou","live":"close"},"windowheight":"auto","codelamp":"close","ajaxurl":"https:\/\/2heng.xin\/wp-admin\/admin-ajax.php","order":"desc","formpostion":"bottom"};</script>
+  <div id="aplayer-float" style="z-index: 100;" class="aplayer" data-id="2825751550" data-server="netease" data-type="playlist" data-fixed="true" data-preload="none" data-order="random" data-theme="orange"></div>
+  <div class="prpr">
+   <div class="mashiro-tips"></div>
+
+  </div>
+  <script type="text/javascript" defer="" src="{% static 'scripts/autoptimize_93db58e34be0b77e74bb21a3c1a8d7e3.js' %}"></script>
+ </body>
+</html>
+
+

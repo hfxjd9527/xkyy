@@ -1,0 +1,250 @@
+﻿{% load staticfiles %}
+{% load comment_tags %}
+<!DOCTYPE html>
+<html lang="en-US" prefix="og: http://ogp.me/ns#">
+ <head>
+    {% include 'head.html' %}
+ </head>
+ <body class="home blog hfeed chinese-font">
+  <div class="scrollbar" id="bar"></div>
+  <section id="main-container">
+   <div class="headertop filter-dot">
+    <div id="banner_wave_1"></div>
+    <div id="banner_wave_2"></div>
+    <figure id="centerbg" class="centerbg">
+     <div class="focusinfo no-select">
+      <h1 class="center-text glitch is-glitching Ubuntu-font" data-text="Hi, 终于等到你！">Hi, 终于等到你！</h1>
+      <div class="header-info">
+       <p><i class="fa fa-quote-left"></i> Had i not seen the sun, i could have borne the shade. <i class="fa fa-quote-right"></i></p>
+       <div class="top-social_v2">
+        <li id="bg-pre">
+            <img class="flipx" src="{% static 'picture/next-b.svg' %}"/>
+        </li>
+        <li><a href="https://github.com/hfxjd9527" target="_blank" class="social-github" title="github"><img src="{% static 'picture/github.png' %}"/></a></li>
+        <li><a href="http://weibo.com/3951259526/profile?topnav=1&wvr=6&is_all=1" target="_blank" class="social-sina" title="sina"><img src="{% static 'picture/sina.png' %}"/></a></li>
+        <li><a href="https://music.163.com/#/user/home?id=1826976262" target="_blank" class="social-wangyiyun" title="CloudMusic"><img src="{% static 'picture/wangyiyun.png' %}"/></a></li>
+        <li><a href="https://www.zhihu.com/people/li-ruo-chen-59" target="_blank" class="social-wangyiyun" title="Zhihu"><img src="{% static 'picture/zhihu.png' %}"/></a></li>
+        <li><a onclick="mail_me()" class="social-wangyiyun" title="E-mail"><img src="{% static 'picture/email.svg' %}"/></a></li>
+        <li id="bg-next"><img src="{% static 'picture/next-b.svg' %}"/></li>
+       </div>
+      </div>
+     </div>
+    </figure>
+    <div id="video-container" style="">
+     <video id="bgvideo" class="video" video-name="" src="" width="auto" preload="auto"></video>
+     <div id="video-btn" class="loadvideo videolive"></div>
+     <div id="video-add"></div>
+     <div class="video-stu"></div>
+    </div>
+    <div class="headertop-down faa-float animated" onclick="headertop_down()">
+     <span> <i class="fa fa-chevron-down" aria-hidden="true"></i> </span>
+    </div>
+   </div>
+   <div id="page" class="site wrapper">
+    <header class="site-header no-select is-homepage" role="banner">
+     <div class="site-top">
+      <div class="site-branding">
+       <span class="site-title"> <span class="logolink moe-mashiro"> <a href="/" alt="星空音乐"> <span class="sakurasono">仰望星空 </span>
+           <span class="shironeko">聆听音乐</span>
+       </a> </span> </span>
+      </div>
+      <div class="lower-cantiner">
+       <div class="lower">
+        <div id="show-nav" class="showNav mobile-fit">
+         <div class="line line1"></div>
+         <div class="line line2"></div>
+         <div class="line line3"></div>
+        </div>
+         <!--导航条-->
+        <nav class="mobile-fit-control hide">
+
+            {% include 'nav.html' %}
+        </nav>
+        <!--导航条结束-->
+       </div>
+      </div>
+     {#自带登录按钮#}
+
+      {% include 'userinfo.html' %}
+      <div class="searchbox">
+          <a href="{% url 'starry:starry_search' %}"><i class="iconfont starry-search iconsearch icon-search"></i></a>
+      </div>
+     </div>
+    </header>
+    <div class="blank"></div>
+    <div id="content" class="site-content">
+     <div class="notice" style="margin-top:60px">
+      <i class="iconfont icon-notification"></i>
+      <div class="notice-content">
+       最近事多，评论无法逐一回复，见谅~&gt;ω&lt;
+      </div>
+     </div>
+
+     <div id="primary" class="content-area">
+      <main id="main" class="site-main" role="main">
+       <h1 class="main-title" style="font-family: 'Ubuntu', sans-serif;"><i class="fa fa-envira" aria-hidden="true"></i> Discovery</h1>
+    {% for article in articles.object_list %}
+          <article class="post post-list-thumb {% if forloop.counter|divisibleby:2 %}post-list-thumb-left{% endif %}" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <div class="post-thumb">
+         <a href="{% url 'starry:article_detail' article.id %}"> <img class="lazyload" id="post-th-4169" src="{{ MEDIA_URL }}{{ article.image }}" onerror="imgError(this,3)" data-src="{{ MEDIA_URL }}{{ article.image }}"/> </a>
+        </div>
+        <div class="post-content-wrap">
+         <div class="post-content">
+          <div class="post-date">
+           <i class="iconfont icon-time"></i>{{ article.created_date }}
+          </div>
+          <a href="{% url 'starry:article_detail' article.id %}" class="post-title"><h3>{{ article.title }}</h3></a>
+          <div class="post-meta">
+           <span><i class="iconfont icon-attention"></i>{{ article.click_nums }} 热度</span>
+           <span class="comments-number"><i class="iconfont icon-mark"></i><a href="{% url 'starry:article_detail' article.id %}">{% get_comment_count article %} 条评论</a></span>
+           <span><i class="iconfont icon-file"></i><a href="{% url 'starry:cate_list' %}?cate={{ article.category_id }}">{{ article.category }}</a> </span>
+          </div>
+          <div class="float-content">
+           <p>
+             {% autoescape off %}
+             {{ article.content|truncatechars:80 }}
+             {% endautoescape %}
+           </p>
+           <div class="post-bottom">
+            <a href="{% url 'starry:article_detail' article.id %}" class="button-normal"><i class="iconfont icon-caidan"></i></a>
+           </div>
+          </div>
+         </div>
+        </div>
+       </article>
+      {% endfor %}
+      </main>
+
+     {#文章分页#}
+          <div class="pageturn">
+            <ul class="pagelist">
+                {% if articles.has_previous %}
+                    <li class="long"><a href="?{{ articles.previous_page_number.querystring }}">上一页</a></li>
+                {% endif %}
+                {% for page in articles.pages %}
+                    {% if page %}
+                        {% ifequal page articles.number %}
+                            <li class="active"><a href="?{{ page.querystring }}" class="page">{{ page }}</a>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li class="none"><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if articles.has_next %}
+                    <li class="long"><a href="?{{ articles.next_page_number.querystring }}">下一页</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    {#分页结束#}
+
+     </div>
+    </div>
+   </div>
+{# footer #}
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="site-info">
+     <div class="footertext">
+      <div class="img-preload">
+       <img src="{% static 'picture/wordpress-rotating-ball-o.svg' %}" />
+{#       <img src="{% static 'picture/disqus-preloader.svg' %}" />#}
+      </div>
+      <p class="foo-logo" style="background-image: url("{% static 'images/sakura.svg' %}");"></p>
+      <p style="font-family: 'Ubuntu', sans-serif;"><span style="color: #666666;">The longest day <i class="fa fa-heart animated" style="color: #e74c3c;"></i> has an end.</span></p>
+      <p>&copy; 2019 星空音乐 豫ICP备17042269号</p>
+     </div>
+     <div class="footer-device"></div>
+     <p id="footer-sponsor"><a href="https://console.upyun.com/register/?invite=r1EuSLN-f" target="_blank" alt="CDN Sponsor" rel="nofollow"><img src="{% static 'picture/upyun.png' %}" alt="CDN Sponsor" style="height: 2em; max-height: 2em;" /></a>&nbsp;&nbsp;&nbsp;<a href="http://www.vultr.com/?ref=7196564" target="_blank" alt="Server provider" rel="nofollow"><img src="{% static 'picture/logo_onwhite.png' %}" alt="Server provider" style="height: 1.3em; max-height: 1.3em;padding-bottom: 0px;margin-bottom: 0.35em;" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.jsdelivr.com/" target="_blank" alt="Free CDN" rel="nofollow"><img src="{% static 'picture/jsdelivr_logo.svg' %}" alt="jsDelivr" style="height: 2em; max-height: 2em;padding-bottom: 0px;" /></a>&nbsp;&nbsp;&nbsp;<a href="https://www.google.com/intl/ja/analytics/" target="_blank" alt="Analytics solution" rel="nofollow"><img src="{% static 'picture/google.svg' %}" alt="Google Analytics" style="height: 1.7em; max-height: 1.7em;padding-bottom: 0px;" /></a></p>
+    </div>
+   </footer>
+{# footer结束 #}
+
+
+
+   <div class="openNav no-select">
+    <div class="iconflat no-select">
+     <div class="icon"></div>
+    </div>
+    <div class="site-branding">
+     <h1 class="site-title"><a href="https://127.0.0.1">星空音乐</a></h1>
+    </div>
+   </div>
+  </section>
+  <div id="mo-nav">
+   <div class="m-avatar">
+    <img src="{% static 'picture/avatar.jpg' %}" />
+   </div>
+   <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">Starry Music</p>
+   <p style="text-align: center; word-spacing: 20px;"> <a href="http://weibo.com/3951259526" class="fa fa-weibo" target="_blank" style="color: #dd4b39"></a> <a href="https://github.com/hfxjd9527" class="fa fa-github" target="_blank" style="color: #333"></a> <a onclick="mail_me()" class="fa fa-envelope" style="color: #ffbf00"></a></p>
+
+      {% include 'nav.html' %}
+
+
+
+   <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy; 2019 星空音乐</p>
+  </div>
+  <a href="#" class="cd-top faa-float animated "></a>
+  <button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <form class="js-search search-form search-form--modal" method="get" action="https://127.0.0.1" role="search">
+   <div class="search-form__inner">
+    <div>
+     <p class="micro mb-">想要找点什么呢？</p>
+     <i class="iconfont icon-search"></i>
+     <input class="text-input" type="search" name="s" placeholder="Search" required="" />
+    </div>
+   </div>
+   <div class="search_close"></div>
+  </form>
+  <script type="text/javascript">var HermitX = {"ajaxurl":"https:\/\/127.0.0.1\/wp-admin\/admin-ajax.php","version":"2.9.6"};</script>
+  <script type="text/javascript" src="{% static 'scripts/hermit-load.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'scripts/lib.min.js' %}"></script>
+  <script type="text/javascript">var Poi = {"pjax":"1","movies":{"url":"https:\/\/cdn.jsdelivr.net\/gh\/moezx\/cdn@3.1.3\/","name":"The Pet Girl of Sakurasou","live":"close"},"windowheight":"auto","codelamp":"close","ajaxurl":"https:\/\/127.0.0.1\/wp-admin\/admin-ajax.php","order":"desc","formpostion":"bottom"};</script>
+  <div id="aplayer-float" style="z-index: 100;" class="aplayer" data-id="2825751550" data-server="netease" data-type="playlist" data-fixed="true" data-preload="none" data-order="random" data-theme="orange"></div>
+  <div class="prpr">
+   <div class="mashiro-tips"></div>
+   <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+  </div>
+  <div class="live2d-tool hide-live2d no-select" onclick="hide_live2d()">
+   <div class="keys">
+    Hide
+   </div>
+  </div>
+  <div class="live2d-tool switch-live2d no-select" onclick="switch_pio()">
+   <div class="keys">
+    Switch
+   </div>
+  </div>
+  <div class="live2d-tool save-live2d no-select" onclick="save_pio()">
+   <div class="keys">
+    Save
+   </div>
+  </div>
+  <div class="changeSkin-gear no-select">
+   <div class="keys">
+    <span id="open-skinMenu"> 切换主题 | SCHEME TOOL &nbsp;<i class="iconfont icon-gear inline-block rotating"></i> </span>
+   </div>
+  </div>
+  <div class="skin-menu no-select">
+   <div class="theme-controls row-container">
+    <ul class="menu-list">
+     <li id="white-bg"> <i class="fa fa-television" aria-hidden="true"></i></li>
+     <li id="sakura-bg"> <i class="iconfont icon-sakura"></i></li>
+     <li id="gribs-bg"> <i class="fa fa-slack" aria-hidden="true"></i></li>
+     <li id="KAdots-bg"> <i class="iconfont icon-dots"></i></li>
+     <li id="totem-bg"> <i class="fa fa-optin-monster" aria-hidden="true"></i></li>
+     <li id="pixiv-bg"> <i class="iconfont icon-pixiv"></i></li>
+     <li id="bing-bg"> <i class="iconfont icon-bing"></i></li>
+     <li id="dark-bg"> <i class="fa fa-moon-o" aria-hidden="true"></i></li>
+    </ul>
+   </div>
+   <div class="font-family-controls row-container">
+    <button type="button" class="control-btn-serif selected" data-mode="serif" onclick="mashiro_global.font_control.change_font()">Serif</button>
+    <button type="button" class="control-btn-sans-serif" data-mode="sans-serif" onclick="mashiro_global.font_control.change_font()">Sans Serif</button>
+   </div>
+  </div>
+  <canvas id="night-mode-cover"></canvas>
+  <script type="text/javascript" defer="" src="{% static 'scripts/autoptimize_93db58e34be0b77e74bb21a3c1a8d7e3.js' %}"></script>
+ </body>
+
+</html>
