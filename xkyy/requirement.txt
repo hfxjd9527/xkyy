@@ -175,7 +175,7 @@ pyecharts-snapshot==0.1.10
 pyee==5.0.0
 PyExecJS==1.5.1
 pyflakes==1.6.0
-Pygments==2.2.0
+Pygments==2.7.4
 PyHamcrest==1.9.0
 pyHook==1.5.1
 pyjsparser==2.5.2
